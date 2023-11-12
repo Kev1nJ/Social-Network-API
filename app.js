@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
-const db = require('./config/db'); 
 
 require('dotenv').config();
 
@@ -12,22 +11,37 @@ require('dotenv').config();
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  useFindAndModify: false,
+  // Remove the useFindAndModify option
 })
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
+
 app.use(bodyParser.json());
 app.use(cors());
 
-// Define your API routes
+// API routes
 const usersRoutes = require('./routes/users'); 
 const thoughtsRoutes = require('./routes/thoughts'); 
 
 app.use('/users', usersRoutes); 
 app.use('/thoughts', thoughtsRoutes);
 
-// Error handling middleware (not shown in this example, but you should include it)
+// Root route handler
+app.get('/', (req, res) => {
+  res.send('Social Network API!');
+});
+
+
+// Error handling middleware 
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+
+  res.status(500).json({
+    status: 'error',
+    message: 'Something went wrong!',
+  });
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
