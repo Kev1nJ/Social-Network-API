@@ -93,7 +93,7 @@ To run the application locally, follow these steps:
 
 ### Thoughts
 
-[... Repeat the above pattern for Thoughts routes ...]
+[... Repeat the above pattern for Thoughts routes except for POST, Endpoint will be `POST /thoughts/`...]
 
 
 ## Demo
