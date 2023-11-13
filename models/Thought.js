@@ -1,24 +1,40 @@
 const mongoose = require("mongoose");
 
-const PostSchema = new mongoose.Schema(
+const reactionSchema = new mongoose.Schema({
+  reactionBody: {
+    type: String,
+    required: true,
+  },
+  username: {
+    type: String,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+const thoughtSchema = new mongoose.Schema(
   {
-    userId: {
+    thoughtText: {
+      type: String,
+      required: true,
+      minlength: 1,
+      maxlength: 280,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      get: (timestamp) => new Date(timestamp).toLocaleString(),
+    },
+    username: {
       type: String,
       required: true,
     },
-    desc: {
-      type: String,
-      max: 500,
-    },
-    img: {
-      type: String,
-    },
-    likes: {
-      type: Array,
-      default: [],
-    },
+    reactions: [reactionSchema],
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Post", PostSchema);
+module.exports = mongoose.model("Thought", thoughtSchema);

@@ -1,11 +1,34 @@
 const express = require('express');
 const User = require('../models/User');
 const router = express.Router();
-const UserController = require('../controllers/UserController');
+const UserController = require('../controllers/userController');
 const bcrypt = require('bcrypt');
 
+
+// get a user
+router.get('/:User123', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      // User with the specified ID was not found
+      return res.status(404).json({ status: 'error', message: 'User not found' });
+    }
+
+    const { password, updatedAt, ...other } = user._doc;
+    res.status(200).json({ status: 'success', data: other });
+  } catch (err) {
+    // Handle other errors (e.g., database errors)
+    res.status(500).json({ status: 'error', error: err.message });
+  }
+});
+
+
+router.post('/register', UserController.register);
+router.post('/login', UserController.login);
+
 // update user
-router.put('/:id', async (req, res) => {
+router.put('/:User123', async (req, res) => {
   if (req.body.userId === req.params.id || req.body.isAdmin) {
     if (req.body.password) {
       try {
@@ -29,7 +52,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // delete user
-router.delete('/:id', async (req, res) => {
+router.delete('/:User123', async (req, res) => {
   if (req.body.userId === req.params.id || req.body.isAdmin) {
     try {
       await User.findByIdAndDelete(req.params.id);
@@ -42,18 +65,6 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// get a user
-router.get('/:id', async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    const { password, updatedAt, ...other } = user._doc;
-    res.status(200).json({ status: 'success', data: other });
-  } catch (err) {
-    res.status(500).json({ status: 'error', error: err.message });
-  }
-});
 
-router.post('/register', UserController.register);
-router.post('/login', UserController.login);
 
 module.exports = router;

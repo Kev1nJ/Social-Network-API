@@ -11,12 +11,16 @@ require('dotenv').config();
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  // Remove the useFindAndModify option
+ 
 })
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
-
+  app.use((req, res, next) => {
+    console.log(`Received ${req.method} request to ${req.url}`);
+    next();
+  });
+  
 app.use(bodyParser.json());
 app.use(cors());
 
